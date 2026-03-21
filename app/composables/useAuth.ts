@@ -1,3 +1,6 @@
+import type {LoginPayload, RegisterPayload, User} from "~/types/user";
+import type {ErrorResponse} from "~/types/api";
+
 export const useAuth = () => {
     const api = useApi()
 
@@ -60,8 +63,8 @@ export const useAuth = () => {
 
             const route = useRoute()
             await navigateTo((route.query.redirect as string) || '/')
-        } catch (e: ApiError) {
-            const err = e
+        } catch (e) {
+            const err = e as ErrorResponse;
 
             if (err.status === 401) {
                 error.value = 'Неверный email или пароль.'
@@ -95,8 +98,8 @@ export const useAuth = () => {
 
             const route = useRoute()
             await navigateTo((route.query.redirect as string) || '/')
-        } catch (e: ApiError) {
-            const err = e
+        } catch (e) {
+            const err = e as ErrorResponse;
 
             if (err.status === 422) {
                 error.value = 'Некорректно заполнена форма.'
@@ -122,7 +125,7 @@ export const useAuth = () => {
             loaded.value = true
 
             await navigateTo('/login')
-        } catch (e: ApiError) {
+        } catch (e) {
             error.value = 'Не удалось выйти из системы.'
         } finally {
             actionPending.value = false

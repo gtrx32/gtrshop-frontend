@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type {Banner} from "~/types/banner";
+
 interface BannerSliderProps {
   banners: Banner[]
 }

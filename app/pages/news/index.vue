@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type {News} from "~/types/news";
+import type {PaginatedResponse, PaginationMeta} from "~/types/api";
+
 definePageMeta({
   breadcrumb: 'Новости',
 })
@@ -12,7 +15,7 @@ const items = ref<News[]>([])
 const meta = ref<PaginationMeta | null>(null)
 const loadingMore = ref(false)
 
-const {data, pending, error} = await useAsyncData(
+const {data, pending} = await useAsyncData(
     'news:init',
     () => api<PaginatedResponse<News>>('api/news', {
       params: {page: page.value, per_page: perPage.value},
@@ -65,7 +68,7 @@ async function loadMore() {
             <img
                 class="rounded-3xl h-full w-full md:w-96 lg:w-128 object-cover transition-transform duration-300 group-hover:scale-95"
                 alt=""
-                :src="item.image"
+                :src="item.image ?? undefined"
             />
           </div>
           <div class="flex-1 flex flex-col gap-2 md:gap-4 py-4 md:p-6 lg:p-8">

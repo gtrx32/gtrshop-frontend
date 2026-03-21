@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type {News} from "~/types/news";
+import type {Banner} from "~/types/banner";
+import type {PaginatedResponse} from "~/types/api";
+
 const api = useApi()
 
 const { data: banners } = await useAsyncData('banners', () =>

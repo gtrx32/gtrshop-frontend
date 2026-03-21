@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type {News} from "~/types/news";
+
 const api = useApi()
 const route = useRoute()
 

@@ -13,13 +13,13 @@ export type User = {
     orders?: Order[]
 }
 
-type LoginPayload = {
+export type LoginPayload = {
     email: string
     password: string
     remember?: boolean
 }
 
-type RegisterPayload = {
+export type RegisterPayload = {
     name: string
     email: string
     password: string
