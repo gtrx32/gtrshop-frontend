@@ -11,6 +11,7 @@
     --color-gtr-accent: rgb(135, 150, 220);
     --color-gtr-warning: rgb(255, 170, 100);
     --color-gtr-error: rgb(255, 120, 120);
+    --color-gtr-shadow: rgba(0, 0, 0, 0.4);
 }
 
 .dark {
@@ -26,4 +27,5 @@
     --color-gtr-accent: rgb(125, 140, 210);
     --color-gtr-warning: rgb(255, 140, 90);
     --color-gtr-error: rgb(210, 90, 90);
+    --color-gtr-shadow: rgba(0, 0, 0, 0.6);
 }

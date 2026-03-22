@@ -9,11 +9,11 @@ defineProps<Props>()
 </script>
 
 <template>
-  <NuxtLink :to="banner.target_url" class="block relative h-180 overflow-hidden rounded-xl">
+  <NuxtLink :to="banner.target_url" class="group block relative h-180 overflow-hidden rounded-xl">
     <img
         :src="banner.image ?? undefined"
         :alt="banner.title"
-        class="h-full w-full object-cover"
+        class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-102"
         loading="lazy"
     />
 
