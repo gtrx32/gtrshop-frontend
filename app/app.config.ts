@@ -2,7 +2,7 @@ export default defineAppConfig({
     ui: {
         button: {
             slots: {
-                base: ['inline-flex items-center justify-center gap-1 font-normal rounded-xl cursor-pointer'],
+                base: ['inline-flex items-center justify-center gap-1 font-normal rounded-lg cursor-pointer'],
                 leadingIcon: ['mt-0.5'],
             },
             variants: {
