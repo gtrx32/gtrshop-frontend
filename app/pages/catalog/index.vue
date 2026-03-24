@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type {PaginatedResponse, PaginationMeta} from '~/types/api'
-import type {CatalogFilters, CatalogSortKey, CatalogSortOrder, CatalogViewMode} from '~/types/catalog'
+import type {PaginationMeta} from '~/types/api'
+import type {CatalogFilters, CatalogResponse, CatalogSortKey, CatalogSortOrder, CatalogViewMode} from '~/types/catalog'
 import {CATALOG_SORT_OPTIONS} from '~/types/catalog'
-import type {Product} from '~/types/product'
 
 definePageMeta({
   breadcrumb: 'Каталог',
@@ -15,13 +14,12 @@ const filters = reactive<CatalogFilters>({
   name: typeof route.query.name === 'string' ? route.query.name : '',
   priceMin: typeof route.query.price_min === 'string' && route.query.price_min !== '' ? Number(route.query.price_min) : null,
   priceMax: typeof route.query.price_max === 'string' && route.query.price_max !== '' ? Number(route.query.price_max) : null,
-  ratingMin: typeof route.query.rating_min === 'string' && route.query.rating_min !== '' ? Number(route.query.rating_min) : null,
-  ratingMax: typeof route.query.rating_max === 'string' && route.query.rating_max !== '' ? Number(route.query.rating_max) : null,
   inStock: route.query.in_stock === '1',
 })
 
 const page = ref(typeof route.query.page === 'string' ? Number(route.query.page) || 1 : 1)
-const perPage = 2
+const perPageOptions = ['6', '9', '12', '15']
+const perPage = ref(perPageOptions.includes(String(route.query.per_page)) ? String(route.query.per_page) : '6')
 
 const sort = ref<CatalogSortKey>(isCatalogSortKey(route.query.sort) ? route.query.sort : 'id')
 const order = ref<CatalogSortOrder>(route.query.order === 'asc' ? 'asc' : 'desc')
@@ -33,20 +31,18 @@ const selectedSortLabel = computed(() => {
 
 const requestParams = computed(() => ({
   page: page.value,
-  per_page: perPage,
+  per_page: Number(perPage.value),
   sort: sort.value,
   order: order.value,
   name: filters.name || undefined,
   price_min: filters.priceMin ?? undefined,
   price_max: filters.priceMax ?? undefined,
-  rating_min: filters.ratingMin ?? undefined,
-  rating_max: filters.ratingMax ?? undefined,
   in_stock: filters.inStock ? 1 : undefined,
 }))
 
 const {data, pending, refresh} = await useAsyncData(
     'catalog:products',
-    () => api<PaginatedResponse<Product>>('api/products', {
+    () => api<CatalogResponse>('api/products', {
       query: requestParams.value,
     }),
     {
@@ -56,6 +52,10 @@ const {data, pending, refresh} = await useAsyncData(
 
 const products = computed(() => data.value?.data ?? [])
 const meta = computed<PaginationMeta | null>(() => data.value?.meta ?? null)
+const priceBounds = computed(() => ({
+  min_price: data.value?.filters?.min_price ?? 0,
+  max_price: data.value?.filters?.max_price ?? 100000,
+}))
 
 const hasProducts = computed(() => products.value.length > 0)
 
@@ -73,8 +73,6 @@ function updateFilters(value: CatalogFilters) {
   filters.name = value.name
   filters.priceMin = value.priceMin
   filters.priceMax = value.priceMax
-  filters.ratingMin = value.ratingMin
-  filters.ratingMax = value.ratingMax
   filters.inStock = value.inStock
 }
 
@@ -83,8 +81,6 @@ function resetFilters() {
     name: '',
     priceMin: null,
     priceMax: null,
-    ratingMin: null,
-    ratingMax: null,
     inStock: false,
   })
 }
@@ -98,14 +94,8 @@ function applySort(optionLabel: string) {
   page.value = 1
 }
 
-function setPage(nextPage: number) {
-  if (!meta.value) return
-  if (nextPage < 1 || nextPage > meta.value.last_page) return
-  page.value = nextPage
-}
-
 watch(
-    () => filters,
+    () => [filters, perPage],
     () => page.value = 1,
     {deep: true}
 )
@@ -120,6 +110,7 @@ watch(
         <catalog-filters
             :loading="pending"
             :model-value="filters"
+            :price-bounds="priceBounds"
             @reset="resetFilters"
             @update:model-value="updateFilters"
         />
@@ -174,10 +165,10 @@ watch(
           </div>
         </div>
 
-        <div class="flex justify-center">
+        <div class="flex flex-col items-center gap-4">
           <UPagination
               v-model:page="page"
-              :items-per-page="perPage"
+              :items-per-page="Number(perPage)"
               :sibling-count="2"
               :total="meta?.total"
               :ui="{
@@ -191,6 +182,14 @@ watch(
               }"
               show-edges
           />
+          <div class="flex items-center gap-4">
+            <div>Товаров на странице:</div>
+            <u-select
+                :items="perPageOptions"
+                class="min-w-20"
+                v-model="perPage"
+            />
+          </div>
         </div>
       </section>
     </div>

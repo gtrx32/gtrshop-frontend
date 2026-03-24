@@ -1,3 +1,6 @@
+import type {PaginatedResponse} from '~/types/api'
+import type {Product} from '~/types/product'
+
 export type CatalogViewMode = 'grid' | 'table'
 
 export type CatalogSortKey = 'id' | 'name' | 'price' | 'stock' | 'rating'
@@ -14,9 +17,16 @@ export type CatalogFilters = {
     name: string
     priceMin: number | null
     priceMax: number | null
-    ratingMin: number | null
-    ratingMax: number | null
     inStock: boolean
+}
+
+export type CatalogPriceBounds = {
+    min_price: number | null
+    max_price: number | null
+}
+
+export type CatalogResponse = PaginatedResponse<Product> & {
+    filters?: CatalogPriceBounds
 }
 
 export const CATALOG_SORT_OPTIONS: CatalogSortOption[] = [
@@ -28,5 +38,3 @@ export const CATALOG_SORT_OPTIONS: CatalogSortOption[] = [
     { label: 'Рейтинг выше', value: 'rating', order: 'desc' },
     { label: 'Остаток больше', value: 'stock', order: 'desc' },
 ] as const
-
-// todo: вернуть локальные типы в catalog/index.vue

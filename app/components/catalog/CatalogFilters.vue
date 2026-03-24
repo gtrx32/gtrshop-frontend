@@ -1,141 +1,130 @@
-<script setup lang="ts">
-import type { CatalogFilters } from '~/types/catalog'
-// todo: рефактор
+<script lang="ts" setup>
+import type {CatalogFilters} from '~/types/catalog'
+
 interface CatalogFiltersProps {
-    modelValue: CatalogFilters
-    loading?: boolean
+  modelValue: CatalogFilters
+  loading?: boolean
+  priceBounds?: {
+    min_price: number | null
+    max_price: number | null
+  }
 }
 
 const props = defineProps<CatalogFiltersProps>()
 
 const emit = defineEmits<{
-    'update:modelValue': [value: CatalogFilters]
-    reset: []
+  'update:modelValue': [value: CatalogFilters]
+  reset: []
 }>()
 
+const minPriceLimit = computed(() => props.priceBounds?.min_price ?? 0)
+const maxPriceLimit = computed(() => props.priceBounds?.max_price ?? 100000)
+
 function updateFilter<Key extends keyof CatalogFilters>(key: Key, value: CatalogFilters[Key]) {
-    emit('update:modelValue', {
-        ...props.modelValue,
-        [key]: value,
-    })
+  emit('update:modelValue', {
+    ...props.modelValue,
+    [key]: value,
+  })
+}
+
+const priceRange = ref<[number, number]>([
+  props.modelValue.priceMin ?? minPriceLimit.value,
+  props.modelValue.priceMax ?? maxPriceLimit.value,
+])
+
+watch(
+    () => [props.modelValue.priceMin, props.modelValue.priceMax, minPriceLimit.value, maxPriceLimit.value],
+    ([min, max]) => {
+      priceRange.value = [min ?? minPriceLimit.value, max ?? maxPriceLimit.value]
+    }
+)
+
+function commitPriceRange() {
+  updateFilter('priceMin', priceRange.value[0])
+  updateFilter('priceMax', priceRange.value[1])
 }
 </script>
 
 <template>
-  <aside class="rounded-lg border border-gtr-soft bg-gtr-fade/40 p-5 md:p-6">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h2 class="text-xl font-medium text-gtr-base">
-          Фильтры
-        </h2>
-        <p class="mt-1 text-sm text-gtr-muted">
-          Поиск, цена, рейтинг и наличие
-        </p>
-      </div>
-
-      <u-button
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          :disabled="loading"
-          @click="emit('reset')"
-      >
+  <aside class="rounded-lg border border-gtr-soft bg-gtr-fade/40 p-5 md:p-6 space-y-6">
+    <div class="flex items-center justify-between gap-4">
+      <h2 class="text-xl font-medium text-gtr-base">
+        Фильтры
+      </h2>
+      <u-button :disabled="loading" size="lg" variant="ghost" @click="emit('reset')">
         Сбросить
       </u-button>
     </div>
 
-    <div class="mt-6 space-y-5">
-      <div class="space-y-2">
+    <div class="flex flex-col gap-6">
+      <div>
         <label class="text-sm text-gtr-toned" for="catalog-name">
           Название
         </label>
-        <input
+        <u-input
             id="catalog-name"
-            :value="modelValue.name"
-            type="text"
-            class="w-full rounded-2xl border border-gtr-soft bg-white/70 px-4 py-3 text-gtr-base outline-none transition focus:border-gtr-accent dark:bg-gtr-pale"
-            placeholder="Например, Fender"
-            @input="updateFilter('name', ($event.target as HTMLInputElement).value)"
+            :model-value="modelValue.name"
+            :ui="{ base: 'w-full rounded-lg border border-gtr-soft bg-white/70 dark:bg-gtr-pale' }"
+            class="w-full mt-1"
+            placeholder="Например, danil kolbasenko"
+            @change="updateFilter('name', ($event.target as HTMLInputElement).value)"
         />
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="text-sm text-gtr-toned" for="catalog-price-min">
-            Цена от
-          </label>
-          <input
-              id="catalog-price-min"
-              :value="modelValue.priceMin ?? ''"
-              type="number"
-              min="0"
-              class="w-full rounded-2xl border border-gtr-soft bg-white/70 px-4 py-3 text-gtr-base outline-none transition focus:border-gtr-accent dark:bg-gtr-pale"
-              placeholder="0"
-              @input="updateFilter('priceMin', ($event.target as HTMLInputElement).value === '' ? null : Number(($event.target as HTMLInputElement).value))"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <label class="text-sm text-gtr-toned" for="catalog-price-max">
-            Цена до
-          </label>
-          <input
-              id="catalog-price-max"
-              :value="modelValue.priceMax ?? ''"
-              type="number"
-              min="0"
-              class="w-full rounded-2xl border border-gtr-soft bg-white/70 px-4 py-3 text-gtr-base outline-none transition focus:border-gtr-accent dark:bg-gtr-pale"
-              placeholder="500000"
-              @input="updateFilter('priceMax', ($event.target as HTMLInputElement).value === '' ? null : Number(($event.target as HTMLInputElement).value))"
-          />
-        </div>
+      <div class="flex gap-2">
+        <u-switch v-model="modelValue.inStock" id="catalog-in-stock" />
+        <label class="" for="catalog-in-stock">
+          Только в наличии
+        </label>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="text-sm text-gtr-toned" for="catalog-rating-min">
-            Рейтинг от
-          </label>
-          <input
-              id="catalog-rating-min"
-              :value="modelValue.ratingMin ?? ''"
-              type="number"
-              min="0"
-              max="5"
-              step="0.1"
-              class="w-full rounded-2xl border border-gtr-soft bg-white/70 px-4 py-3 text-gtr-base outline-none transition focus:border-gtr-accent dark:bg-gtr-pale"
-              placeholder="0"
-              @input="updateFilter('ratingMin', ($event.target as HTMLInputElement).value === '' ? null : Number(($event.target as HTMLInputElement).value))"
-          />
+      <div class="flex flex-col gap-4">
+        <div class="flex gap-4">
+          <div>
+            <label class="text-sm text-gtr-toned" for="catalog-price-min">
+              Цена от
+            </label>
+            <u-input-number
+                id="catalog-price-min"
+                :max="priceRange[1]"
+                :min="minPriceLimit"
+                :model-value="priceRange[0]"
+                :ui="{ base: 'w-full rounded-lg border border-gtr-soft bg-white/70 dark:bg-gtr-pale' }"
+                class="w-full mt-1"
+                orientation="vertical"
+                @update:model-value="(value: number | undefined) => updateFilter('priceMin', value ?? minPriceLimit)"
+            />
+          </div>
+          <div>
+            <label class="text-sm text-gtr-toned" for="catalog-price-max">
+              Цена до
+            </label>
+            <u-input-number
+                id="catalog-price-max"
+                :max="maxPriceLimit"
+                :min="priceRange[0]"
+                :model-value="priceRange[1]"
+                :ui="{ base: 'w-full rounded-lg border border-gtr-soft bg-white/70 dark:bg-gtr-pale' }"
+                class="w-full mt-1"
+                orientation="vertical"
+                @update:model-value="(value: number | undefined) => updateFilter('priceMax', value ?? maxPriceLimit)"
+            />
+          </div>
         </div>
-
-        <div class="space-y-2">
-          <label class="text-sm text-gtr-toned" for="catalog-rating-max">
-            Рейтинг до
-          </label>
-          <input
-              id="catalog-rating-max"
-              :value="modelValue.ratingMax ?? ''"
-              type="number"
-              min="0"
-              max="5"
-              step="0.1"
-              class="w-full rounded-2xl border border-gtr-soft bg-white/70 px-4 py-3 text-gtr-base outline-none transition focus:border-gtr-accent dark:bg-gtr-pale"
-              placeholder="5"
-              @input="updateFilter('ratingMax', ($event.target as HTMLInputElement).value === '' ? null : Number(($event.target as HTMLInputElement).value))"
-          />
-        </div>
-      </div>
-
-      <label class="flex items-center gap-3 rounded-2xl border border-gtr-soft bg-white/60 px-4 py-3 text-sm text-gtr-base dark:bg-gtr-pale">
-        <input
-            :checked="modelValue.inStock"
-            type="checkbox"
-            class="h-4 w-4 rounded border-gtr-soft text-gtr-base focus:ring-gtr-accent"
-            @change="updateFilter('inStock', ($event.target as HTMLInputElement).checked)"
+        <u-slider
+            v-model="priceRange"
+            :max="maxPriceLimit"
+            :min="minPriceLimit"
+            :step="1000"
+            :ui="{
+              track: 'bg-white/70 dark:bg-gtr-pale',
+              range: 'bg-gtr-contrast',
+              thumb: 'bg-white ring-gtr-contrast dark:bg-gtr-pale',
+            }"
+            color="neutral"
+            @change="commitPriceRange"
         />
-        <span>Только в наличии</span>
-      </label>
+      </div>
     </div>
   </aside>
 </template>
