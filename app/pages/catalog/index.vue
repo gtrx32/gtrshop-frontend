@@ -117,7 +117,7 @@ watch(
       </div>
 
       <section class="h-full flex flex-col gap-4">
-        <div class="rounded-lg border border-gtr-soft bg-gtr-fade/40 p-4 md:p-5">
+        <div class="rounded-lg border border-gtr-soft p-4 md:p-5">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div class="text-sm uppercase tracking-[0.18em] text-gtr-muted">

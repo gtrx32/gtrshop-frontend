@@ -46,7 +46,7 @@ function commitPriceRange() {
 </script>
 
 <template>
-  <aside class="rounded-lg border border-gtr-soft bg-gtr-fade/40 p-5 md:p-6 space-y-6">
+  <aside class="rounded-lg border border-gtr-soft  p-5 md:p-6 space-y-6">
     <div class="flex items-center justify-between gap-4">
       <h2 class="text-xl font-medium text-gtr-base">
         Фильтры
