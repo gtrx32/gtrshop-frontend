@@ -40,7 +40,7 @@ const requestParams = computed(() => ({
   in_stock: filters.inStock ? 1 : undefined,
 }))
 
-const {data, pending, refresh} = await useAsyncData(
+const {data, pending} = await useAsyncData(
     'catalog:products',
     () => api<CatalogResponse>('api/products', {
       query: requestParams.value,
@@ -85,6 +85,13 @@ function resetFilters() {
   })
 }
 
+function updatePerPage(value: string) {
+  if (perPage.value === value) return
+
+  page.value = 1
+  perPage.value = value
+}
+
 function applySort(optionLabel: string) {
   const option = CATALOG_SORT_OPTIONS.find((item) => item.label === optionLabel)
   if (!option) return
@@ -95,7 +102,7 @@ function applySort(optionLabel: string) {
 }
 
 watch(
-    () => [filters, perPage],
+    filters,
     () => page.value = 1,
     {deep: true}
 )
@@ -187,7 +194,8 @@ watch(
             <u-select
                 :items="perPageOptions"
                 class="min-w-20"
-                v-model="perPage"
+                :model-value="perPage"
+                @update:model-value="updatePerPage"
             />
           </div>
         </div>
