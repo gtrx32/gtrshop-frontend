@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type {Product} from '~/types/product'
+﻿<script setup lang="ts">
+import type { Product } from '~/types/product'
 
 interface CatalogGridProps {
   products: Product[]
@@ -13,6 +13,10 @@ function formatPrice(price: number) {
 
 function formatStock(stock: number) {
   return stock > 0 ? `${stock} в наличии` : 'Нет в наличии'
+}
+
+function formatRating(rating?: number) {
+  return rating ? rating.toFixed(1) : null
 }
 </script>
 
@@ -45,6 +49,31 @@ function formatStock(stock: number) {
           <h3 class="line-clamp-2 text-xl leading-tight font-medium text-gtr-base">
             {{ product.name }}
           </h3>
+        </div>
+
+        <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+          <div
+              v-if="product.reviews_count"
+              class="flex flex-wrap items-center gap-1 text-gtr-muted"
+          >
+            <UIcon
+                name="mdi:star"
+                class="size-4 text-gtr-warning"
+            />
+            <span>{{ formatRating(product.rating) }}</span>
+            <span>· {{ product.reviews_count }} отзывов</span>
+          </div>
+
+          <div
+              v-else
+              class="flex items-center gap-1 text-gtr-dimmed"
+          >
+            <UIcon
+                name="mdi:star-outline"
+                class="size-4"
+            />
+            <span>Нет отзывов</span>
+          </div>
         </div>
 
         <p class="line-clamp-3 text-sm leading-6 text-gtr-muted">
