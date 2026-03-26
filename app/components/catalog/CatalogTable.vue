@@ -6,18 +6,6 @@ interface CatalogTableProps {
 }
 
 const props = defineProps<CatalogTableProps>()
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('ru-RU').format(price)
-}
-
-function formatStock(stock: number) {
-  return stock > 0 ? `${stock} в наличии` : 'Нет в наличии'
-}
-
-function formatRating(rating?: number) {
-  return rating ? rating.toFixed(1) : null
-}
 </script>
 
 <template>
@@ -93,7 +81,7 @@ function formatRating(rating?: number) {
             Цена
           </div>
           <div class="text-2xl font-medium whitespace-nowrap text-gtr-base">
-            {{ formatPrice(product.price) }} ₽
+            {{ formatPrice(product.price) }}
           </div>
         </div>
 
