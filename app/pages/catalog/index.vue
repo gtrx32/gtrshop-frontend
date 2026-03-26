@@ -176,7 +176,7 @@ watch(
           <UPagination
               v-model:page="page"
               :items-per-page="Number(perPage)"
-              :sibling-count="2"
+              :sibling-count="1"
               :total="meta?.total"
               :ui="{
                 list: 'flex flex-wrap justify-center sm:flex-nowrap',
@@ -187,7 +187,6 @@ watch(
                 last: 'size-10',
                 ellipsis: 'size-10',
               }"
-              show-edges
           />
           <div class="flex items-center gap-4">
             <div>Товаров на странице:</div>
