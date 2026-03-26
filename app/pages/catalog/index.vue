@@ -178,15 +178,6 @@ watch(
               :items-per-page="Number(perPage)"
               :sibling-count="1"
               :total="meta?.total"
-              :ui="{
-                list: 'flex flex-wrap justify-center sm:flex-nowrap',
-                first: 'size-10',
-                prev: 'size-10',
-                item: 'size-10',
-                next: 'size-10',
-                last: 'size-10',
-                ellipsis: 'size-10',
-              }"
           />
           <div class="flex items-center gap-4">
             <div>Товаров на странице:</div>

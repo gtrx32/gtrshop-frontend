@@ -71,9 +71,9 @@ function commitPriceRange() {
         />
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex gap-3 items-center">
         <u-switch v-model="modelValue.inStock" id="catalog-in-stock" />
-        <label class="" for="catalog-in-stock">
+        <label class="cursor-pointer" for="catalog-in-stock">
           Только в наличии
         </label>
       </div>
