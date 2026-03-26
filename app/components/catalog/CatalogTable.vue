@@ -10,15 +10,13 @@ const props = defineProps<CatalogTableProps>()
 
 <template>
   <div class="divide-y divide-gtr-soft overflow-hidden rounded-lg border border-gtr-soft bg-gtr-pale">
-    <article
+    <NuxtLink
+        :to="`/catalog/${product.slug}`"
         v-for="product in props.products"
         :key="product.id"
         class="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 p-4 transition-colors duration-200 hover:bg-gtr-fade/25 md:grid-cols-[88px_minmax(0,1fr)_172px] md:gap-5 md:p-5"
     >
-      <NuxtLink
-          :to="`/catalog/${product.slug}`"
-          class="block self-start overflow-hidden rounded-md"
-      >
+
         <div class="aspect-square">
           <img
               :src="product.image ?? ''"
@@ -26,17 +24,12 @@ const props = defineProps<CatalogTableProps>()
               class="h-full w-full object-cover"
           >
         </div>
-      </NuxtLink>
 
       <div class="min-w-0">
-        <NuxtLink
-            :to="`/catalog/${product.slug}`"
-            class="block min-w-0"
-        >
+
           <h3 class="line-clamp-2 text-lg leading-tight font-medium text-gtr-base">
             {{ product.name }}
           </h3>
-        </NuxtLink>
 
         <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <u-badge
@@ -96,6 +89,6 @@ const props = defineProps<CatalogTableProps>()
           В корзину
         </u-button>
       </div>
-    </article>
+    </NuxtLink>
   </div>
 </template>
