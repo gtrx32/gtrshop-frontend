@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
-    <div class="text-center text-2xl font-semibold leading-tight sm:text-left">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <div class="min-w-0 flex-1 text-2xl font-semibold leading-tight">
       <slot name="title" />
     </div>
 
     <div
         v-if="$slots.actions"
-        class="flex w-full flex-wrap items-center justify-center gap-2 sm:w-auto sm:justify-end"
+        class="ml-auto flex flex-nowrap items-center gap-2"
     >
       <slot name="actions" />
     </div>
