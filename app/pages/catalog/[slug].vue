@@ -24,7 +24,16 @@ const reviewsLabel = computed(() => {
 })
 const stockText = computed(() => inStock.value ? `В наличии: ${product.value.stock}` : 'Нет в наличии')
 
-route.meta.breadcrumb = product.value.name
+const {setBreadcrumbs} = useBreadcrumbs()
+
+watch(
+    () => product.value.name,
+    (name) => setBreadcrumbs([
+      {label: 'Каталог', to: '/catalog'},
+      {label: name},
+    ]),
+    {immediate: true}
+)
 
 useSeoMeta({
   title: () => `${product.value.name}`,
@@ -202,3 +211,4 @@ useSeoMeta({
     </div>
   </div>
 </template>
+

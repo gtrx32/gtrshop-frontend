@@ -14,7 +14,21 @@ const { data } = await useAsyncData(
 
 const news = computed(() => data.value!)
 
-route.meta.breadcrumb = news.value.title
+const {setBreadcrumbs} = useBreadcrumbs()
+
+watch(
+    () => news.value.title,
+    (title) => setBreadcrumbs([
+      {label: 'Новости', to: '/news'},
+      {label: title},
+    ]),
+    {immediate: true}
+)
+
+useSeoMeta({
+  title: () => `${news.value.title}`,
+  description: () => news.value.excerpt,
+})
 </script>
 
 <template>
@@ -43,3 +57,4 @@ route.meta.breadcrumb = news.value.title
     </u-button>
   </div>
 </template>
+

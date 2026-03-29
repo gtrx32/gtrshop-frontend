@@ -3,12 +3,13 @@ import type {PaginationMeta} from '~/types/api'
 import type {CatalogFilters, CatalogResponse, CatalogSortKey, CatalogSortOrder, CatalogViewMode} from '~/types/catalog'
 import {CATALOG_SORT_OPTIONS} from '~/types/catalog'
 
-definePageMeta({
-  breadcrumb: 'Каталог',
-})
-
 const api = useApi()
 const route = useRoute()
+const {setBreadcrumbs} = useBreadcrumbs()
+
+setBreadcrumbs([
+  {label: 'Каталог'},
+])
 
 const filters = reactive<CatalogFilters>({
   name: typeof route.query.name === 'string' ? route.query.name : '',
@@ -193,3 +194,4 @@ watch(
     </div>
   </div>
 </template>
+

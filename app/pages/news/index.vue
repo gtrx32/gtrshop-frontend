@@ -2,11 +2,12 @@
 import type {News} from "~/types/news";
 import type {PaginatedResponse, PaginationMeta} from "~/types/api";
 
-definePageMeta({
-  breadcrumb: 'Новости',
-})
-
 const api = useApi()
+const {setBreadcrumbs} = useBreadcrumbs()
+
+setBreadcrumbs([
+  {label: 'Новости'},
+])
 
 const perPage = ref(10)
 const page = ref(1)
