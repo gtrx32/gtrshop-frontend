@@ -90,19 +90,19 @@ function updateFilter<Key extends keyof CatalogFilters>(
             Цена от
           </label>
 
-          <u-input-number
+          <u-input
               id="catalog-price-min"
-              :model-value="modelValue.price_min"
+              type="number"
+              :model-value="modelValue.price_min ?? filterValues?.price.min ?? undefined"
+              :disabled="loading"
               :min="filterValues?.price.min ?? 0"
               :max="filterValues?.price.max ?? undefined"
-              :step="100"
-              :step-snapping="false"
-              orientation="vertical"
+              step="100"
               class="mt-1 w-full"
               :ui="{
                 base: 'w-full rounded-lg border border-gtr-soft bg-white/70 text-gtr-base dark:bg-gtr-pale'
               }"
-              @update:model-value="updateFilter('price_min', $event ?? null)"
+              @change="updateFilter('price_min', ($event.target as HTMLInputElement).valueAsNumber || null)"
           />
         </div>
 
@@ -114,19 +114,19 @@ function updateFilter<Key extends keyof CatalogFilters>(
             Цена до
           </label>
 
-          <u-input-number
+          <u-input
               id="catalog-price-max"
-              :model-value="modelValue.price_max"
+              type="number"
+              :model-value="modelValue.price_max ?? filterValues?.price.max ?? undefined"
+              :disabled="loading"
               :min="filterValues?.price.min ?? 0"
               :max="filterValues?.price.max ?? undefined"
-              :step="100"
-              :step-snapping="false"
-              orientation="vertical"
+              step="100"
               class="mt-1 w-full"
               :ui="{
                 base: 'w-full rounded-lg border border-gtr-soft bg-white/70 text-gtr-base dark:bg-gtr-pale'
               }"
-              @update:model-value="updateFilter('price_max', $event ?? null)"
+              @change="updateFilter('price_max', ($event.target as HTMLInputElement).valueAsNumber || null)"
           />
         </div>
       </div>
