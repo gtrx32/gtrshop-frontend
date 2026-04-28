@@ -1,6 +1,12 @@
 <script setup lang="ts">
-const {loadUser} = useAuth()
+const { user, loadUser } = useAuth()
+const cartStore = useCartStore()
+
 await loadUser()
+
+if (user.value) {
+  await cartStore.loadCart()
+}
 </script>
 
 <template>

@@ -1,11 +1,15 @@
 <script setup lang="ts">
-const {user, loadUser, logout} = useAuth()
-await loadUser()
+const {user, logout} = useAuth()
 
 async function handleLogout() {
   await logout()
   closeMobile()
 }
+
+const cartStore = useCartStore()
+
+const cartQuantity = computed(() => cartStore.cart?.total_quantity ?? 0)
+const hasCartItems = computed(() => cartQuantity.value > 0)
 
 const isMobileMenuOpen = ref(false)
 
@@ -43,8 +47,14 @@ onBeforeUnmount(() => {
 
       <div class="hidden md:flex items-stretch gap-3">
         <template v-if="user">
-          <u-button to="/cart" color="primary" variant="ghost" size="xl">
+          <u-button to="/cart" color="primary" variant="ghost" size="xl" class="relative">
             <icon name="mdi:cart-outline" class="text-xl"/>
+            <span
+                v-if="hasCartItems"
+                class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gtr-base px-1.5 text-xs font-medium text-gtr-pale"
+            >
+              {{ cartQuantity }}
+            </span>
           </u-button>
           <u-button to="/profile" color="primary" variant="ghost" size="xl">
             <span>{{ user.name }}</span>
@@ -115,6 +125,12 @@ onBeforeUnmount(() => {
                   >
                     <icon name="mdi:cart-outline" class="text-xl"/>
                     <span>Корзина</span>
+                    <span
+                        v-if="hasCartItems"
+                        class="ml-auto rounded-full bg-gtr-base px-2 py-0.5 text-xs font-medium text-gtr-pale"
+                    >
+                      {{ cartQuantity }}
+                    </span>
                   </u-button>
                   <u-button
                       @click="handleLogout"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAutoAnimate } from '@formkit/auto-animate/vue'
 import type { Product } from '~/types/product'
+import AddToCartButton from "~/components/catalog/list/AddToCartButton.vue";
 
 interface CatalogProductGridProps {
   products: Product[]
@@ -9,6 +10,8 @@ interface CatalogProductGridProps {
 defineProps<CatalogProductGridProps>()
 
 const [gridRef] = useAutoAnimate()
+
+const { user } = useAuth()
 </script>
 
 <template>
@@ -89,16 +92,7 @@ const [gridRef] = useAutoAnimate()
               </div>
             </div>
           </div>
-
-          <u-button
-              color="primary"
-              variant="ghost"
-              size="lg"
-              block
-              @click.prevent
-          >
-            В корзину
-          </u-button>
+          <AddToCartButton v-if="user" :product-id="product.id" :stock="product.stock"/>
         </div>
       </div>
     </nuxt-link>

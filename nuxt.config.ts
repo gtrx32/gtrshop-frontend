@@ -21,7 +21,7 @@ export default defineNuxtConfig({
         plugins: [tailwindcss()]
     },
     css: ['~/assets/css/main.css', '~/assets/css/fonts.css'],
-    modules: ['@nuxt/icon', '@nuxt/ui'],
+    modules: ['@nuxt/icon', '@nuxt/ui', '@pinia/nuxt'],
     ui: {
         fonts: false,
     },

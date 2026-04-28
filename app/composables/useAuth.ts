@@ -54,6 +54,9 @@ export const useAuth = () => {
             await api('/api/login', { method: 'POST', body: payload })
             await refreshUser()
 
+            const cartStore = useCartStore()
+            await cartStore.loadCart()
+
             const toast = useToast()
             toast.add({
                 title: 'Вход выполнен успешно',
@@ -88,6 +91,9 @@ export const useAuth = () => {
             await ensureCsrf()
             await api('/api/register', { method: 'POST', body: payload })
             await refreshUser()
+
+            const cartStore = useCartStore()
+            await cartStore.loadCart()
 
             const toast = useToast()
             toast.add({
@@ -125,6 +131,9 @@ export const useAuth = () => {
             loaded.value = true
 
             await navigateTo('/login')
+
+            const cartStore = useCartStore()
+            cartStore.clearCart()
         } catch (e) {
             error.value = 'Не удалось выйти из системы.'
         } finally {
