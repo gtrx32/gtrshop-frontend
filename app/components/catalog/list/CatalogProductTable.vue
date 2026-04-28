@@ -1,35 +1,39 @@
 <script setup lang="ts">
+import { useAutoAnimate } from '@formkit/auto-animate/vue'
 import type { Product } from '~/types/product'
 
-interface CatalogTableProps {
+interface CatalogProductTableProps {
   products: Product[]
 }
 
-const props = defineProps<CatalogTableProps>()
+defineProps<CatalogProductTableProps>()
+
+const [listRef] = useAutoAnimate()
 </script>
 
 <template>
-  <div class="divide-y divide-gtr-soft overflow-hidden rounded-lg border border-gtr-soft bg-gtr-pale">
-    <NuxtLink
-        :to="`/catalog/${product.slug}`"
-        v-for="product in props.products"
+  <div
+      ref="listRef"
+      class="divide-y divide-gtr-soft overflow-hidden rounded-lg border border-gtr-soft bg-gtr-pale"
+  >
+    <nuxt-link
+        v-for="product in products"
         :key="product.id"
+        :to="`/catalog/${product.slug}`"
         class="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 p-4 transition-colors duration-200 hover:bg-gtr-fade/25 md:grid-cols-[88px_minmax(0,1fr)_172px] md:gap-5 md:p-5"
     >
-
-        <div class="aspect-square">
-          <img
-              :src="product.image ?? ''"
-              :alt="product.name"
-              class="h-full w-full object-cover"
-          >
-        </div>
+      <div class="aspect-square overflow-hidden rounded-lg bg-gtr-fade">
+        <img
+            :src="product.image ?? ''"
+            :alt="product.name"
+            class="h-full w-full object-cover"
+        >
+      </div>
 
       <div class="min-w-0">
-
-          <h3 class="line-clamp-2 text-lg leading-tight font-medium text-gtr-base">
-            {{ product.name }}
-          </h3>
+        <h3 class="line-clamp-2 text-lg font-medium leading-tight text-gtr-base">
+          {{ product.name }}
+        </h3>
 
         <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <u-badge
@@ -43,10 +47,11 @@ const props = defineProps<CatalogTableProps>()
               v-if="product.reviews_count"
               class="flex flex-wrap items-center gap-1 text-gtr-muted"
           >
-            <UIcon
+            <u-icon
                 name="mdi:star"
                 class="size-4 text-gtr-warning"
             />
+
             <span>{{ formatRating(product.rating) }}</span>
             <span>· {{ product.reviews_count }} отзывов</span>
           </div>
@@ -55,10 +60,11 @@ const props = defineProps<CatalogTableProps>()
               v-else
               class="flex items-center gap-1 text-gtr-dimmed"
           >
-            <UIcon
+            <u-icon
                 name="mdi:star-outline"
                 class="size-4"
             />
+
             <span>Нет отзывов</span>
           </div>
         </div>
@@ -73,7 +79,8 @@ const props = defineProps<CatalogTableProps>()
           <div class="hidden text-xs uppercase tracking-[0.16em] text-gtr-dimmed md:block">
             Цена
           </div>
-          <div class="text-2xl font-medium whitespace-nowrap text-gtr-base">
+
+          <div class="whitespace-nowrap text-2xl font-medium text-gtr-base">
             {{ formatPrice(product.price) }}
           </div>
         </div>
@@ -89,6 +96,6 @@ const props = defineProps<CatalogTableProps>()
           В корзину
         </u-button>
       </div>
-    </NuxtLink>
+    </nuxt-link>
   </div>
 </template>

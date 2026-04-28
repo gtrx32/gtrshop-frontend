@@ -1,40 +1,41 @@
-import type {PaginatedResponse} from '~/types/api'
-import type {Product} from '~/types/product'
+export const CATALOG_SORTS = ['id', 'name', 'price', 'stock', 'rating'] as const
+
+export const CATALOG_SORT_ORDERS = ['asc', 'desc'] as const
 
 export type CatalogViewMode = 'grid' | 'table'
 
-export type CatalogSortKey = 'id' | 'name' | 'price' | 'stock' | 'rating'
+export type CatalogSort = typeof CATALOG_SORTS[number]
 
-export type CatalogSortOrder = 'asc' | 'desc'
+export type CatalogSortOrder = typeof CATALOG_SORT_ORDERS[number]
 
-export type CatalogSortOption = {
+export interface CatalogViewModeOption {
     label: string
-    value: CatalogSortKey
+    value: CatalogViewMode
+}
+
+export interface CatalogSortOption {
+    label: string
+    value: CatalogSort,
     order: CatalogSortOrder
 }
 
-export type CatalogFilters = {
+export interface CatalogFilters {
     name: string
-    priceMin: number | null
-    priceMax: number | null
-    inStock: boolean
+    price_min: number | null
+    price_max: number | null
+    in_stock: boolean
 }
 
-export type CatalogPriceBounds = {
-    min_price: number | null
-    max_price: number | null
+export interface CatalogFilterValues {
+    price: {
+        min: number | null
+        max: number | null
+    }
 }
 
-export type CatalogResponse = PaginatedResponse<Product> & {
-    filters?: CatalogPriceBounds
+export interface CatalogQuery extends CatalogFilters {
+    sort: CatalogSort,
+    order: CatalogSortOrder,
+    page: number,
+    per_page: number,
 }
-
-export const CATALOG_SORT_OPTIONS: CatalogSortOption[] = [
-    { label: 'Сначала новые', value: 'id', order: 'desc' },
-    { label: 'Название А-Я', value: 'name', order: 'asc' },
-    { label: 'Название Я-А', value: 'name', order: 'desc' },
-    { label: 'Цена по возрастанию', value: 'price', order: 'asc' },
-    { label: 'Цена по убыванию', value: 'price', order: 'desc' },
-    { label: 'Рейтинг выше', value: 'rating', order: 'desc' },
-    { label: 'Остаток больше', value: 'stock', order: 'desc' },
-] as const

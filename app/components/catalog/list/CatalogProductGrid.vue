@@ -1,31 +1,38 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
+import { useAutoAnimate } from '@formkit/auto-animate/vue'
 import type { Product } from '~/types/product'
 
-interface CatalogGridProps {
+interface CatalogProductGridProps {
   products: Product[]
 }
 
-const props = defineProps<CatalogGridProps>()
+defineProps<CatalogProductGridProps>()
+
+const [gridRef] = useAutoAnimate()
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    <NuxtLink
-        v-for="product in props.products"
+  <div
+      ref="gridRef"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+  >
+    <nuxt-link
+        v-for="product in products"
         :key="product.id"
         :to="`/catalog/${product.slug}`"
-        class="grid min-h-[420px] grid-rows-[220px_auto] overflow-hidden rounded-lg border border-gtr-soft bg-gtr-pale transition-all duration-200 hover:bg-gtr-fade/30 hover:shadow-[0_0_15px_0_var(--color-gtr-accent)]"
+        class="group grid min-h-[420px] grid-rows-[220px_auto] overflow-hidden rounded-lg border border-gtr-soft bg-gtr-pale transition-all duration-200 hover:bg-gtr-fade/30 hover:shadow-[0_0_15px_0_var(--color-gtr-accent)]"
     >
-      <div class="relative bg-gtr-fade">
+      <div class="relative overflow-hidden bg-gtr-fade">
         <img
             :src="product.image ?? ''"
             :alt="product.name"
-            class="h-full w-full object-cover"
+            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
         >
+
         <div class="absolute right-3 top-3">
           <u-badge
-              :class="product.stock > 0 ? 'text-gtr-highlight border-gtr-highlight' : 'text-gtr-error border-gtr-error'"
-              class="bg-gtr-pale border"
+              :class="product.stock > 0 ? 'border-gtr-highlight text-gtr-highlight' : 'border-gtr-error text-gtr-error'"
+              class="border bg-gtr-pale"
           >
             {{ formatStock(product.stock) }}
           </u-badge>
@@ -34,7 +41,7 @@ const props = defineProps<CatalogGridProps>()
 
       <div class="flex h-full flex-col p-4">
         <div class="mb-3">
-          <h3 class="line-clamp-2 text-xl leading-tight font-medium text-gtr-base">
+          <h3 class="line-clamp-2 text-xl font-medium leading-tight text-gtr-base">
             {{ product.name }}
           </h3>
         </div>
@@ -44,10 +51,11 @@ const props = defineProps<CatalogGridProps>()
               v-if="product.reviews_count"
               class="flex flex-wrap items-center gap-1 text-gtr-muted"
           >
-            <UIcon
+            <u-icon
                 name="mdi:star"
                 class="size-4 text-gtr-warning"
             />
+
             <span>{{ formatRating(product.rating) }}</span>
             <span>· {{ product.reviews_count }} отзывов</span>
           </div>
@@ -56,10 +64,11 @@ const props = defineProps<CatalogGridProps>()
               v-else
               class="flex items-center gap-1 text-gtr-dimmed"
           >
-            <UIcon
+            <u-icon
                 name="mdi:star-outline"
                 class="size-4"
             />
+
             <span>Нет отзывов</span>
           </div>
         </div>
@@ -74,6 +83,7 @@ const props = defineProps<CatalogGridProps>()
               <span class="text-xs uppercase tracking-[0.16em] text-gtr-dimmed">
                 Цена
               </span>
+
               <div class="text-2xl font-medium text-gtr-base">
                 {{ formatPrice(product.price) }}
               </div>
@@ -91,6 +101,6 @@ const props = defineProps<CatalogGridProps>()
           </u-button>
         </div>
       </div>
-    </NuxtLink>
+    </nuxt-link>
   </div>
 </template>

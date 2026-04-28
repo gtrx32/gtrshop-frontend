@@ -22,9 +22,7 @@ export default defineNuxtConfig({
     },
     css: ['~/assets/css/main.css', '~/assets/css/fonts.css'],
     modules: ['@nuxt/icon', '@nuxt/ui'],
-    fonts: {
-        providers: {
-            fontshare: false,
-        },
+    ui: {
+        fonts: false,
     },
 });
