@@ -9,4 +9,5 @@ export type Review = {
     dislikes: number
     created_at: string
     user?: User
+    user_mark?: 'like' | 'dislike' | null
 }
