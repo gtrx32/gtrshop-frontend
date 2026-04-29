@@ -18,6 +18,8 @@ const reviewsLabel = computed(() => {
 const stockText = computed(() => {
   return inStock.value ? `В наличии: ${props.product.stock}` : 'Нет в наличии'
 })
+
+const { user } = useAuth()
 </script>
 
 <template>
@@ -86,6 +88,7 @@ const stockText = computed(() => {
         </div>
 
         <AddToCartButton
+            v-if="user"
             :product-id="product.id"
             :stock="product.stock"
             size="lg"

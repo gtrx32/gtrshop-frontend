@@ -11,8 +11,23 @@ const emit = defineEmits<{
   dislike: [reviewId: number]
 }>()
 
+const { user } = useAuth()
+
+const canReact = computed(() => Boolean(user.value))
 const isLiked = computed(() => props.review.user_mark === 'like')
 const isDisliked = computed(() => props.review.user_mark === 'dislike')
+
+const like = () => {
+  if (!canReact.value || props.loading) return
+
+  emit('like', props.review.id)
+}
+
+const dislike = () => {
+  if (!canReact.value || props.loading) return
+
+  emit('dislike', props.review.id)
+}
 </script>
 
 <template>
@@ -62,6 +77,7 @@ const isDisliked = computed(() => props.review.user_mark === 'dislike')
 
     <div class="mt-5 flex flex-wrap items-center gap-3">
       <u-button
+          v-if="canReact"
           variant="ghost"
           color="primary"
           size="md"
@@ -70,7 +86,7 @@ const isDisliked = computed(() => props.review.user_mark === 'dislike')
           isLiked ? 'bg-gtr-highlight/20 text-gtr-highlight ring-1 ring-gtr-highlight/25' : '',
           loading ? 'opacity-60' : ''
         ]"
-          @click="emit('like', props.review.id)"
+          @click="like"
       >
         <u-icon
             :name="isLiked ? 'mdi:thumb-up' : 'mdi:thumb-up-outline'"
@@ -80,7 +96,20 @@ const isDisliked = computed(() => props.review.user_mark === 'dislike')
         <span class="tabular-nums">{{ review.likes }}</span>
       </u-button>
 
+      <div
+          v-else
+          class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium"
+      >
+        <u-icon
+            name="mdi:thumb-up-outline"
+            class="size-4"
+        />
+
+        <span class="tabular-nums">{{ review.likes }}</span>
+      </div>
+
       <u-button
+          v-if="canReact"
           variant="ghost"
           color="primary"
           size="md"
@@ -89,7 +118,7 @@ const isDisliked = computed(() => props.review.user_mark === 'dislike')
           isDisliked ? 'bg-gtr-error/20 text-gtr-error ring-1 ring-gtr-error/25' : '',
           loading ? 'opacity-60' : ''
         ]"
-          @click="emit('dislike', props.review.id)"
+          @click="dislike"
       >
         <u-icon
             :name="isDisliked ? 'mdi:thumb-down' : 'mdi:thumb-down-outline'"
@@ -98,6 +127,18 @@ const isDisliked = computed(() => props.review.user_mark === 'dislike')
 
         <span class="tabular-nums">{{ review.dislikes }}</span>
       </u-button>
+
+      <div
+          v-else
+          class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium"
+      >
+        <u-icon
+            name="mdi:thumb-down-outline"
+            class="size-4"
+        />
+
+        <span class="tabular-nums">{{ review.dislikes }}</span>
+      </div>
     </div>
   </article>
 </template>
