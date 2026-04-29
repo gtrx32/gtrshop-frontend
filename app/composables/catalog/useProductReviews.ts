@@ -3,6 +3,16 @@ import type { Review } from '~/types/review'
 
 export type ReviewSortKey = 'newest' | 'oldest' | 'rating_desc' | 'rating_asc'
 
+type ReviewResponse = Review | {
+    data: Review
+}
+
+type CreateReviewPayload = {
+    title: string
+    comment: string
+    rating: number
+}
+
 export const useProductReviews = (productSlug: Ref<string>) => {
     const api = useApi()
 
@@ -10,6 +20,9 @@ export const useProductReviews = (productSlug: Ref<string>) => {
     const meta = ref<PaginationMeta | null>(null)
     const pending = ref(false)
     const error = ref<unknown>(null)
+
+    const createPending = ref(false)
+    const createError = ref<unknown>(null)
 
     const page = ref(1)
     const perPage = ref(6)
@@ -57,6 +70,10 @@ export const useProductReviews = (productSlug: Ref<string>) => {
         return Math.min(currentPage.value * perPage.value, total.value)
     })
 
+    const normalizeReviewResponse = (response: ReviewResponse) => {
+        return 'data' in response ? response.data : response
+    }
+
     const fetchReviews = async (targetPage = page.value) => {
         if (!productSlug.value) return
 
@@ -81,6 +98,41 @@ export const useProductReviews = (productSlug: Ref<string>) => {
             error.value = requestError
         } finally {
             pending.value = false
+        }
+    }
+
+    const createReview = async (payload: CreateReviewPayload) => {
+        if (!productSlug.value) return null
+
+        createPending.value = true
+        createError.value = null
+
+        try {
+            const response = await api<ReviewResponse>('api/reviews', {
+                method: 'POST',
+                body: {
+                    product: productSlug.value,
+                    ...payload,
+                },
+            })
+
+            const review = normalizeReviewResponse(response)
+
+            reviews.value = [
+                review,
+                ...reviews.value.filter((item) => item.id !== review.id),
+            ]
+
+            if (meta.value) {
+                meta.value.total += 1
+            }
+
+            return review
+        } catch (requestError) {
+            createError.value = requestError
+            throw requestError
+        } finally {
+            createPending.value = false
         }
     }
 
@@ -112,6 +164,7 @@ export const useProductReviews = (productSlug: Ref<string>) => {
         meta.value = null
         page.value = 1
         error.value = null
+        createError.value = null
     }
 
     watch(productSlug, () => {
@@ -123,6 +176,9 @@ export const useProductReviews = (productSlug: Ref<string>) => {
         meta,
         pending,
         error,
+
+        createPending,
+        createError,
 
         page,
         perPage,
@@ -138,6 +194,7 @@ export const useProductReviews = (productSlug: Ref<string>) => {
         perPageOptions,
 
         fetchReviews,
+        createReview,
         setPage,
         setSort,
         setPerPage,

@@ -2,6 +2,7 @@
 import type { Review } from '~/types/review'
 import ReviewCard from '~/components/catalog/detail/ReviewCard.vue'
 import ReviewsModal from '~/components/catalog/detail/ReviewsModal.vue'
+import CreateReviewModal from '~/components/catalog/detail/CreateReviewModal.vue'
 import { useProductReviews } from '~/composables/catalog/useProductReviews'
 import { useReviewMarks } from '~/composables/catalog/useReviewMarks'
 
@@ -9,13 +10,16 @@ const props = defineProps<{
   productSlug: string
   reviews: Review[]
   reviewsCount: number
+  canReview?: boolean
 }>()
 
-const isModalOpen = ref(false)
+const isReviewsModalOpen = ref(false)
+const isCreateModalOpen = ref(false)
 
 const productSlug = computed(() => props.productSlug)
 
 const previewReviews = ref<Review[]>([])
+const reviewsCount = ref(props.reviewsCount)
 
 watch(
     () => props.reviews,
@@ -28,10 +32,22 @@ watch(
     },
 )
 
+watch(
+    () => props.reviewsCount,
+    (value) => {
+      reviewsCount.value = value
+    },
+    {
+      immediate: true,
+    },
+)
+
 const {
   reviews: modalReviews,
   pending,
   error,
+  createPending,
+  createError,
   page,
   perPage,
   sort,
@@ -41,6 +57,7 @@ const {
   sortOptions,
   perPageOptions,
   fetchReviews,
+  createReview,
   setPage,
   setSort,
   setPerPage,
@@ -57,12 +74,30 @@ const {
 
 const visibleReviews = computed(() => previewReviews.value.slice(0, 4))
 const hasReviews = computed(() => visibleReviews.value.length > 0)
-const hasReviewsTotal = computed(() => props.reviewsCount > 0)
-const modalTotal = computed(() => total.value || props.reviewsCount)
+const hasReviewsTotal = computed(() => reviewsCount.value > 0)
+const modalTotal = computed(() => total.value || reviewsCount.value)
 
-const openModal = async () => {
-  isModalOpen.value = true
+const openReviewsModal = async () => {
+  isReviewsModalOpen.value = true
   await fetchReviews(1)
+}
+
+const submitReview = async (payload: {
+  title: string
+  comment: string
+  rating: number
+}) => {
+  const review = await createReview(payload)
+
+  if (!review) return
+
+  previewReviews.value = [
+    review,
+    ...previewReviews.value.filter((item) => item.id !== review.id),
+  ]
+
+  reviewsCount.value += 1
+  isCreateModalOpen.value = false
 }
 </script>
 
@@ -74,15 +109,27 @@ const openModal = async () => {
       </template>
 
       <template #actions>
-        <u-button
-            color="primary"
-            variant="ghost"
-            size="lg"
-            :disabled="!hasReviewsTotal"
-            @click="openModal"
-        >
-          {{ hasReviewsTotal ? `Все отзывы (${reviewsCount})` : 'Отзывы появятся позже' }}
-        </u-button>
+        <div class="flex flex-wrap items-center gap-2">
+          <u-button
+              color="primary"
+              variant="ghost"
+              size="lg"
+              :disabled="!hasReviewsTotal"
+              @click="openReviewsModal"
+          >
+            {{ hasReviewsTotal ? `Все отзывы (${reviewsCount})` : 'Отзывы появятся позже' }}
+          </u-button>
+
+          <u-button
+              v-if="canReview"
+              color="primary"
+              size="lg"
+              icon="mdi:pencil-outline"
+              @click="isCreateModalOpen = true"
+          >
+            Оставить отзыв
+          </u-button>
+        </div>
       </template>
     </subtitle>
 
@@ -108,7 +155,7 @@ const openModal = async () => {
     </div>
 
     <ReviewsModal
-        v-model:open="isModalOpen"
+        v-model:open="isReviewsModalOpen"
         :reviews="modalReviews"
         :total="modalTotal"
         :page="page"
@@ -126,6 +173,13 @@ const openModal = async () => {
         @update:perPage="setPerPage"
         @like="likeReview"
         @dislike="dislikeReview"
+    />
+
+    <CreateReviewModal
+        v-model:open="isCreateModalOpen"
+        :loading="createPending"
+        :error="createError"
+        @submit="submitReview"
     />
   </section>
 </template>

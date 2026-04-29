@@ -79,6 +79,7 @@ useSeoMeta({
           :product-slug="product.slug"
           :reviews="previewReviews"
           :reviews-count="reviewsTotal"
+          :can-review="product.can_review"
       />
 
       <div class="flex justify-start">

@@ -12,4 +12,5 @@ export type Product = {
     reviews_count?: number
     rating?: number
     reviews?: Review[]
+    can_review?: boolean
 }
