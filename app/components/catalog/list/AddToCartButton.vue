@@ -2,9 +2,12 @@
 interface CartAddButtonProps {
   productId: number
   stock: number
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
-const props = defineProps<CartAddButtonProps>()
+const props = withDefaults(defineProps<CartAddButtonProps>(), {
+  size: 'md',
+})
 
 const cartStore = useCartStore()
 
@@ -35,7 +38,7 @@ const goToCart = async () => {
   <u-button
       v-if="!isInCart"
       variant="ghost"
-      size="md"
+      :size="size"
       block
       :class="{ 'opacity-30! cursor-not-allowed': isOutOfStock }"
       :loading="isPending"
@@ -52,7 +55,7 @@ const goToCart = async () => {
   >
     <u-button
         variant="ghost"
-        size="md"
+        :size="size"
         class="w-15 shrink-0"
         :loading="isPending"
         @click.prevent.stop="remove"
@@ -66,7 +69,7 @@ const goToCart = async () => {
 
     <u-button
         variant="ghost"
-        size="md"
+        :size="size"
         class="min-w-14 flex-1"
         @click.prevent.stop="goToCart"
     >
@@ -80,7 +83,7 @@ const goToCart = async () => {
 
     <u-button
         variant="ghost"
-        size="md"
+        :size="size"
         class="w-15 shrink-0"
         :class="{ 'opacity-30! cursor-not-allowed': quantity >= stock }"
         :loading="isPending"

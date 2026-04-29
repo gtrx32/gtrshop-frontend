@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import AddToCartButton from '~/components/catalog/list/AddToCartButton.vue'
 
 const props = defineProps<{
   product: Product
@@ -84,18 +85,11 @@ const stockText = computed(() => {
           {{ stockText }}
         </div>
 
-        <u-button v-if="inStock">
-          Добавить в корзину
-        </u-button>
-
-        <u-button
-            v-else
-            to="/contacts"
-            variant="ghost"
-            color="primary"
-        >
-          Уточнить наличие
-        </u-button>
+        <AddToCartButton
+            :product-id="product.id"
+            :stock="product.stock"
+            size="lg"
+        />
       </div>
     </div>
   </section>
