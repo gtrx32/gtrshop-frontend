@@ -1,56 +1,19 @@
 <script setup lang="ts">
-import type {News} from "~/types/news";
-import type {PaginatedResponse, PaginationMeta} from "~/types/api";
+import {useNewsList} from "~/composables/news/useNewsList";
 
-const api = useApi()
 const {setBreadcrumbs} = useBreadcrumbs()
 
 setBreadcrumbs([
   {label: 'Новости'},
 ])
 
-const perPage = ref(10)
-const page = ref(1)
-
-const items = ref<News[]>([])
-const meta = ref<PaginationMeta | null>(null)
-const loadingMore = ref(false)
-
-const {data, pending} = await useAsyncData(
-    'news:init',
-    () => api<PaginatedResponse<News>>('api/news', {
-      params: {page: page.value, per_page: perPage.value},
-    })
-)
-
-watchEffect(() => {
-  if (!data.value) return
-  items.value = data.value.data
-  meta.value = data.value.meta
-})
-
-const news = computed(() => items.value)
-
-const canLoadMore = computed(() => {
-  if (!meta.value) return false
-  return meta.value.current_page < meta.value.last_page
-})
-
-async function loadMore() {
-  if (loadingMore.value || !canLoadMore.value) return
-
-  loadingMore.value = true
-  page.value += 1
-
-  const res = await api<PaginatedResponse<News>>('api/news', {
-    params: {page: page.value, per_page: perPage.value},
-  })
-
-  items.value.push(...res.data)
-  meta.value = res.meta
-
-  loadingMore.value = false
-}
+const {
+  news,
+  pending,
+  canLoadMore,
+  loadMore,
+  loadingMore,
+} = useNewsList()
 </script>
 
 <template>
@@ -63,13 +26,12 @@ async function loadMore() {
           :to="`/news/${item.slug}`"
           class="block group"
       >
-        <article
-            class="flex flex-col md:flex-row transition duration-300 hover:bg-gtr-fade/70 rounded-3xl overflow-hidden">
+        <article class="flex flex-col md:flex-row transition duration-300 hover:bg-gtr-fade/70 rounded-3xl overflow-hidden">
           <div class="shrink-0 overflow-hidden rounded-3xl">
             <img
                 class="rounded-3xl h-full w-full md:w-96 lg:w-128 object-cover transition-transform duration-300 group-hover:scale-95"
-                alt=""
                 :src="item.image ?? undefined"
+                alt=""
             />
           </div>
           <div class="flex-1 flex flex-col gap-2 md:gap-4 py-4 md:p-6 lg:p-8">
@@ -86,6 +48,7 @@ async function loadMore() {
         </article>
       </nuxt-link>
     </div>
+
     <u-button
         v-if="canLoadMore"
         @click="loadMore"

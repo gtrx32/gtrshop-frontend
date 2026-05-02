@@ -1,18 +1,7 @@
 <script setup lang="ts">
-import type {News} from "~/types/news";
+import {useNewsItem} from "~/composables/news/useNewsItem";
 
-const api = useApi()
-const route = useRoute()
-
-const slug = computed(() => String(route.params.slug))
-
-const { data } = await useAsyncData(
-    () => `news:show:${slug.value}`,
-    () => api<News>(`api/news/${slug.value}`),
-    { watch: [slug] }
-)
-
-const news = computed(() => data.value!)
+const { news } = await useNewsItem()
 
 const {setBreadcrumbs} = useBreadcrumbs()
 
@@ -26,7 +15,7 @@ watch(
 )
 
 useSeoMeta({
-  title: () => `${news.value.title}`,
+  title: () => news.value.title,
   description: () => news.value.excerpt,
 })
 </script>
@@ -57,4 +46,3 @@ useSeoMeta({
     </u-button>
   </div>
 </template>
-
