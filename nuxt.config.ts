@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             backendUrl: process.env.BACKEND_URL,
-            appUrl: process.env.APP_URL,
+            yandexMapsKey: process.env.YANDEX_MAPS_KEY,
         },
     },
     app: {
