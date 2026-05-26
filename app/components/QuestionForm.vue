@@ -5,15 +5,15 @@ import type {StoreQuestionPayload} from "~/types/question";
 const toast = useToast();
 const {storeQuestion} = useQuestionApi();
 
-const defaultValue = {
+const getDefaultValue = (): StoreQuestionPayload => ({
   name: '',
   phone: '',
   email: '',
   message: '',
-};
+});
 
-const form = reactive<StoreQuestionPayload>(defaultValue);
-const errors = reactive({...defaultValue});
+const form = reactive<StoreQuestionPayload>(getDefaultValue());
+const errors = reactive<Record<keyof StoreQuestionPayload, string>>(getDefaultValue());
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Введите имя'),
@@ -25,18 +25,21 @@ const schema = z.object({
 const pending = ref(false)
 
 const validate = () => {
-  const result = schema.safeParse(form)
+  clearErrors();
+
+  const result = schema.safeParse(form);
+
   if (!result.success) {
-    Object.keys(errors).forEach(key => {
-      errors[key as keyof typeof errors] = ''
-    })
     result.error.issues.forEach(err => {
-      errors[err.path[0] as keyof typeof errors] = err.message
-    })
-    return false
+      const key = err.path[0] as keyof typeof errors;
+      errors[key] = err.message;
+    });
+
+    return false;
   }
-  return true
-}
+
+  return true;
+};
 
 const submitForm = async () => {
   if (!validate()) return
@@ -45,13 +48,16 @@ const submitForm = async () => {
 
   try {
     await storeQuestion(form);
+
     toast.add({
       title: 'Сообщение отправлено',
       description: 'Мы свяжемся с вами в ближайшее время',
       color: 'success'
     });
-    Object.assign(form, defaultValue);
-    Object.assign(errors, defaultValue);
+
+    clearErrors();
+    clearForm();
+
   } catch (error) {
     toast.add({
       title: 'Ошибка отправки',
@@ -62,6 +68,14 @@ const submitForm = async () => {
     pending.value = false;
   }
 }
+
+const clearErrors = () => {
+  Object.assign(errors, getDefaultValue());
+};
+
+const clearForm = () => {
+  Object.assign(form, getDefaultValue());
+};
 
 const {user} = useAuth();
 
@@ -82,26 +96,38 @@ watchEffect(() => {
     <div class="flex flex-col gap-8 max-w-2xl w-full m-auto">
       <div class="flex flex-col gap-2">
         <label>Имя</label>
-        <u-input v-model="form.name"
-                 :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.name ? 'border-red-500' : ''}` }"></u-input>
+        <u-input
+            v-model="form.name"
+            :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.name ? 'border-red-500' : ''}` }"
+            @update:model-value="errors.name = ''"
+        ></u-input>
         <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
       </div>
       <div class="flex flex-col gap-2">
         <label>Номер телефона</label>
-        <u-input v-model="form.phone"
-                 :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.phone ? 'border-red-500' : ''}` }"></u-input>
+        <u-input
+            v-model="form.phone"
+            :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.phone ? 'border-red-500' : ''}` }"
+            @update:model-value="errors.phone = ''"
+        ></u-input>
         <p v-if="errors.phone" class="text-red-500 text-sm">{{ errors.phone }}</p>
       </div>
       <div class="flex flex-col gap-2">
         <label>Электронная почта</label>
-        <u-input v-model="form.email"
-                 :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.email ? 'border-red-500' : ''}` }"></u-input>
+        <u-input
+            v-model="form.email"
+            :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.email ? 'border-red-500' : ''}` }"
+            @update:model-value="errors.email = ''"
+        ></u-input>
         <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
       </div>
       <div class="flex flex-col gap-2">
         <label>Вопрос</label>
-        <u-textarea v-model="form.message"
-                    :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.message ? 'border-red-500' : ''}` }"></u-textarea>
+        <u-textarea
+            v-model="form.message"
+            :ui="{ base: `rounded-none border-b border-gtr-toned focus:border-gtr-highlight ring-0 focus-visible:ring-0 text-md ${errors.message ? 'border-red-500' : ''}` }"
+            @update:model-value="errors.message = ''"
+        ></u-textarea>
         <p v-if="errors.message" class="text-red-500 text-sm">{{ errors.message }}</p>
       </div>
     </div>
