@@ -36,7 +36,7 @@ onBeforeUnmount(() => {
         GTRSHOP
       </nuxt-link>
 
-      <div class="hidden md:flex flex-1 justify-center">
+      <div class="hidden lg:flex flex-1 justify-center">
         <nav class="flex items-center gap-6 lg:gap-8">
           <u-button to="/" color="primary" variant="link" size="xl">Главная</u-button>
           <u-button to="/catalog" color="primary" variant="link" size="xl">Каталог</u-button>
@@ -45,7 +45,7 @@ onBeforeUnmount(() => {
         </nav>
       </div>
 
-      <div class="hidden md:flex items-stretch gap-3">
+      <div class="hidden lg:flex items-stretch gap-3">
         <template v-if="user">
           <u-button to="/cart" color="primary" variant="ghost" size="xl" class="relative">
             <icon name="mdi:cart-outline" class="text-xl"/>
@@ -56,10 +56,20 @@ onBeforeUnmount(() => {
               {{ cartQuantity }}
             </span>
           </u-button>
-          <u-button to="/profile" color="primary" variant="ghost" size="xl">
-            <span>{{ user.name }}</span>
-            <icon name="mdi:user" class="text-xl"/>
+
+          <u-button
+              to="/profile"
+              color="primary"
+              variant="ghost"
+              size="xl"
+              class="min-w-0 max-w-50"
+          >
+            <span class="min-w-0 truncate">
+              {{ user.name }}
+            </span>
+            <icon name="mdi:user" class="text-xl shrink-0"/>
           </u-button>
+
           <u-button @click="handleLogout" color="primary" variant="ghost" size="xl">
             <icon name="mdi:exit-to-app" class="text-xl"/>
           </u-button>
@@ -76,20 +86,24 @@ onBeforeUnmount(() => {
       </div>
 
       <u-button
-          color="primary" variant="ghost" size="xl"
+          color="primary"
+          variant="ghost"
+          size="xl"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
-          class="md:hidden"
+          class="lg:hidden"
       >
         <icon
             :key="isMobileMenuOpen ? 'open' : 'closed'"
             :name="isMobileMenuOpen ? 'line-md:menu-to-close-transition' : 'line-md:close-to-menu-alt-transition'"
-            class="text-xl" mode="svg"
+            class="text-xl"
+            mode="svg"
         />
         <span>Меню</span>
       </u-button>
     </div>
+
     <Transition name="m-menu">
-      <div v-if="isMobileMenuOpen" class="md:hidden">
+      <div v-if="isMobileMenuOpen" class="lg:hidden">
         <div @click="closeMobile" class="absolute left-0 right-0 top-full h-[calc(100vh-100%)] z-[40] bg-black/50"/>
         <div class="absolute left-0 right-0 top-full z-[60]">
           <div class="bg-gtr-pale shadow-md shadow-gtr-soft overflow-y-auto">
@@ -98,21 +112,22 @@ onBeforeUnmount(() => {
                 <u-button @click="closeMobile" to="/" color="primary" variant="link" size="xl">Главная</u-button>
                 <u-button @click="closeMobile" to="/catalog" color="primary" variant="link" size="xl">Каталог</u-button>
                 <u-button @click="closeMobile" to="/news" color="primary" variant="link" size="xl">Новости</u-button>
-                <u-button @click="closeMobile" to="/contacts" color="primary" variant="link" size="xl">Контакты
-                </u-button>
+                <u-button @click="closeMobile" to="/contacts" color="primary" variant="link" size="xl">Контакты</u-button>
               </nav>
 
               <template v-if="user">
                 <u-button
                     to="/profile"
                     @click="closeMobile"
-                    color="primary" variant="ghost" size="xl"
-                    class="flex justify-start gap-3 px-4 py-4"
+                    color="primary"
+                    variant="ghost"
+                    size="xl"
+                    class="flex justify-start gap-3 px-4 py-4 min-w-0"
                 >
-                  <icon name="mdi:user" class="text-4xl"/>
-                  <div>
-                    <div class="font-medium leading-tight">{{ user.name }}</div>
-                    <div class="text-sm">{{ user.email }}</div>
+                  <icon name="mdi:user" class="text-4xl shrink-0"/>
+                  <div class="min-w-0">
+                    <div class="font-medium leading-tight truncate">{{ user.name }}</div>
+                    <div class="text-sm truncate">{{ user.email }}</div>
                   </div>
                 </u-button>
 
@@ -120,7 +135,9 @@ onBeforeUnmount(() => {
                   <u-button
                       to="/cart"
                       @click="closeMobile"
-                      color="primary" variant="ghost" size="xl"
+                      color="primary"
+                      variant="ghost"
+                      size="xl"
                       class="flex px-4 py-4"
                   >
                     <icon name="mdi:cart-outline" class="text-xl"/>
@@ -132,9 +149,12 @@ onBeforeUnmount(() => {
                       {{ cartQuantity }}
                     </span>
                   </u-button>
+
                   <u-button
                       @click="handleLogout"
-                      color="primary" variant="ghost" size="xl"
+                      color="primary"
+                      variant="ghost"
+                      size="xl"
                       class="flex px-4 py-4"
                   >
                     <icon name="mdi:exit-to-app" class="text-xl"/>
@@ -148,15 +168,20 @@ onBeforeUnmount(() => {
                   <u-button
                       to="/login"
                       @click="closeMobile"
-                      color="primary" variant="ghost" size="xl"
+                      color="primary"
+                      variant="ghost"
+                      size="xl"
                       class="flex px-4 py-4"
                   >
                     Вход
                   </u-button>
+
                   <u-button
                       to="/register"
                       @click="closeMobile"
-                      color="primary" variant="ghost" size="xl"
+                      color="primary"
+                      variant="ghost"
+                      size="xl"
                       class="flex px-4 py-4"
                   >
                     Регистрация

@@ -25,3 +25,18 @@ export type RegisterPayload = {
     password: string
     password_confirmation: string
 }
+
+export type UpdateProfilePayload = {
+    name: string
+    email: string
+}
+
+export type UpdateAvatarPayload = {
+    avatar: File
+}
+
+export type UpdatePasswordPayload = {
+    current_password: string
+    password: string
+    password_confirmation: string
+}

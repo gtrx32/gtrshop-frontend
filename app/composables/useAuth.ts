@@ -1,4 +1,11 @@
-import type {LoginPayload, RegisterPayload, User} from "~/types/user";
+import type {
+    LoginPayload,
+    RegisterPayload,
+    UpdateProfilePayload,
+    UpdateAvatarPayload,
+    UpdatePasswordPayload,
+    User
+} from "~/types/user";
 import type {ErrorResponse} from "~/types/api";
 
 export const useAuth = () => {
@@ -141,6 +148,81 @@ export const useAuth = () => {
         }
     }
 
+    const updateProfile = async (payload: UpdateProfilePayload) => {
+        if (actionPending.value) return
+
+        actionPending.value = true
+        error.value = null
+
+        try {
+            await ensureCsrf()
+
+            user.value = await api<User>('/api/user', {
+                method: 'PATCH',
+                body: payload,
+            })
+
+            return user.value
+        } catch (e) {
+            error.value = 'Не удалось обновить профиль.'
+            throw e
+        } finally {
+            actionPending.value = false
+        }
+    }
+
+    const updateAvatar = async (payload: UpdateAvatarPayload | File) => {
+        if (actionPending.value) return
+
+        actionPending.value = true
+        error.value = null
+
+        const avatar = payload instanceof File ? payload : payload.avatar
+
+        const body = new FormData()
+        body.append('_method', 'PATCH')
+        body.append('avatar', avatar)
+
+        try {
+            await ensureCsrf()
+
+            user.value = await api<User>('/api/user', {
+                method: 'POST',
+                body,
+            })
+
+            return user.value
+        } catch (e) {
+            error.value = 'Не удалось обновить фото.'
+            throw e
+        } finally {
+            actionPending.value = false
+        }
+    }
+
+    const updatePassword = async (payload: UpdatePasswordPayload) => {
+        if (actionPending.value) return
+
+        actionPending.value = true
+        error.value = null
+
+        try {
+            await ensureCsrf()
+
+            user.value = await api<User>('/api/user', {
+                method: 'PATCH',
+                body: payload,
+            })
+
+            return user.value
+        } catch (e) {
+            error.value = 'Не удалось изменить пароль.'
+            throw e
+        } finally {
+            actionPending.value = false
+        }
+    }
+
     return {
         user,
         isAuth,
@@ -152,5 +234,8 @@ export const useAuth = () => {
         login,
         register,
         logout,
+        updateProfile,
+        updateAvatar,
+        updatePassword,
     }
 }
