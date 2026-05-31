@@ -36,7 +36,9 @@ const resetForm = () => {
 }
 
 const submit = () => {
-  if (!canSubmit.value || props.loading) return
+  if (!canSubmit.value || props.loading) {
+    return
+  }
 
   emit('submit', {
     title: title.value.trim(),
@@ -61,10 +63,10 @@ watch(open, (value) => {
   >
     <template #body>
       <form
-          class="space-y-5"
+          class="flex flex-col gap-5"
           @submit.prevent="submit"
       >
-        <div class="space-y-2">
+        <div class="flex flex-col gap-2">
           <label class="text-sm font-medium text-gtr-base">
             Оценка
           </label>
@@ -78,7 +80,7 @@ watch(open, (value) => {
           />
         </div>
 
-        <div class="space-y-2">
+        <div class="flex flex-col gap-2">
           <label class="text-sm font-medium text-gtr-base">
             Заголовок
           </label>
@@ -87,10 +89,11 @@ watch(open, (value) => {
               v-model="title"
               :disabled="loading"
               placeholder="Например: Отличный товар"
+              class="w-full"
           />
         </div>
 
-        <div class="space-y-2">
+        <div class="flex flex-col gap-2">
           <label class="text-sm font-medium text-gtr-base">
             Комментарий
           </label>
@@ -100,6 +103,7 @@ watch(open, (value) => {
               :disabled="loading"
               :rows="6"
               placeholder="Расскажите, что понравилось или не понравилось"
+              class="w-full"
           />
         </div>
 
