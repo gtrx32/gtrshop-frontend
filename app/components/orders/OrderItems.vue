@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import type { CartItem } from '~/types/cart'
-import OrderItem from '~/components/order/OrderItem.vue'
+import type { OrderItem as OrderItemType } from '~/types/order'
+import OrderItem from '~/components/orders/OrderItem.vue'
 
 defineProps<{
-  items: CartItem[]
+  items: CartItem[] | OrderItemType[]
   quantity: number
   total: number
+  title?: string
 }>()
 </script>
 
@@ -13,7 +15,7 @@ defineProps<{
   <div class="rounded-xl border border-gtr-soft bg-gtr-pale p-4 sm:p-6">
     <div class="flex items-center justify-between gap-4">
       <div class="text-2xl font-semibold text-gtr-base">
-        Товары в заказе
+        {{ title ?? 'Товары в заказе' }}
       </div>
 
       <div class="text-gtr-muted">

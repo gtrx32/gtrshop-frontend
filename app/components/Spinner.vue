@@ -10,9 +10,6 @@
         <div class="text-sm uppercase tracking-[0.18em] text-gtr-muted">
           Загрузка
         </div>
-        <div class="text-base font-medium text-gtr-base">
-          Подбираем товары
-        </div>
       </div>
     </div>
   </div>

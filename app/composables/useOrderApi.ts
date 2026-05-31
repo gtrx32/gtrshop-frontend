@@ -10,5 +10,14 @@ export const useOrderApi = () => {
         })
     }
 
-    return { storeOrder }
+    const cancelOrder = async (id: number | string) => {
+        return await api(`/api/orders/${id}/cancel`, {
+            method: 'PATCH',
+        })
+    }
+
+    return {
+        storeOrder,
+        cancelOrder,
+    }
 }

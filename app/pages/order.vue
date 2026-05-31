@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { StoreOrderPayload } from '~/types/order'
-import OrderItems from '~/components/order/OrderItems.vue'
-import OrderForm from '~/components/order/OrderForm.vue'
+import OrderItems from '~/components/orders/OrderItems.vue'
+import OrderForm from '~/components/orders/OrderForm.vue'
 
 type OrderFormPayload = Pick<StoreOrderPayload, 'delivery' | 'comment'>
 

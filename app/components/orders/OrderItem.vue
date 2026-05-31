@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { CartItem } from '~/types/cart'
+import type { OrderItem } from '~/types/order'
 
 defineProps<{
-  item: CartItem
+  item: CartItem | OrderItem
 }>()
 </script>
 
@@ -10,12 +11,12 @@ defineProps<{
   <div class="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center">
     <nuxt-link
         :to="`/catalog/${item.product.slug}`"
-        class="h-60 w-full shrink-0 overflow-hidden rounded-lg bg-gtr-fade sm:h-auto sm:w-32"
+        class="h-52 w-full shrink-0 overflow-hidden rounded-lg bg-gtr-fade sm:h-24 sm:w-24"
     >
       <img
           :src="item.product.image ?? ''"
           :alt="item.product.name"
-          class="h-full w-full object-cover transition duration-300 hover:scale-[1.02]"
+          class="h-full w-full object-cover"
       >
     </nuxt-link>
 
