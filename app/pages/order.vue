@@ -9,6 +9,13 @@ definePageMeta({
   middleware: 'auth',
 })
 
+const { setBreadcrumbs } = useBreadcrumbs()
+
+setBreadcrumbs([
+  { label: 'Корзина', to: '/cart' },
+  { label: 'Оформление заказа' },
+])
+
 const cartStore = useCartStore()
 const toast = useToast()
 const { storeOrder } = useOrderApi()
