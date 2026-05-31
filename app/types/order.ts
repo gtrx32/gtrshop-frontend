@@ -1,6 +1,6 @@
 import type { Product } from './product'
 import type { Payment } from './payment'
-import type { Delivery } from './delivery'
+import type { Delivery, OrderDeliveryPayload } from './delivery'
 
 export type OrderItem = {
     quantity: number
@@ -21,4 +21,15 @@ export type Order = {
     payment?: Payment
     delivery?: Delivery
     products?: OrderItem[]
+}
+
+export type StoreOrderItemPayload = {
+    product_id: number
+    quantity: number
+}
+
+export type StoreOrderPayload = {
+    items: StoreOrderItemPayload[]
+    delivery: OrderDeliveryPayload
+    comment?: string | null
 }
